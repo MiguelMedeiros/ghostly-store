@@ -78,6 +78,7 @@ const keyText = (text(STORE, "STORE_KEY") ?? "").trim();
 const baseKey = BASE ? (text(BASE, "STORE_KEY") ?? "").trim() : "";
 if (keyText && !isAppKey(keyText)) error("STORE_KEY", "is not a store public key (52 z-base32 characters)");
 if (baseKey && keyText !== baseKey) error("STORE_KEY", "changed: a store is its key, and a new key would be another store. Only the owner changes it, in a change of its own");
+else if (BASE && !baseKey && keyText) notice("STORE_KEY", "set for the first time: only the owner sets it, with the key Ghostly pins (DEFAULT_STORE_KEY)");
 const storeKey = isAppKey(keyText) ? keyText : null;
 
 // ---------- the signed index ----------
