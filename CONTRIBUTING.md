@@ -102,11 +102,12 @@ versions on every device. A leaked key cannot be replaced: publish the app again
 - every URL is on a host Ghostly reads;
 - a revocation file verifies and names your app;
 - the signed index, when it changes, is signed by `STORE_KEY` and raises its `sequence`.
+- the store's own scripts type-check against Ghostly's sources (`npm run typecheck`).
 
 Run it locally with `GHOSTLY=<a Ghostly checkout> scripts/check.sh`.
 
 ## Maintainers
 
-Changes to `.github/`, `scripts/`, `GHOSTLY_COMMIT` and `STORE_KEY` change what CI trusts: they need the owner's
-review, and a reviewer reads them line by line. Merge with a merge commit or a squash; the listing is what counts, not
-its commits.
+Changes to `.github/`, `scripts/`, `package.json`, `package-lock.json`, `tsconfig.json`, `GHOSTLY_COMMIT` and `STORE_KEY`
+change what CI trusts: they need the owner's review, and a reviewer reads them line by line. Merge with a merge commit
+or a squash; the listing is what counts, not its commits.

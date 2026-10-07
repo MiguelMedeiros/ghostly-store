@@ -33,7 +33,7 @@ store. Apps arrive in Ghostly 1.2.
 | `apps/<name>.<prefix>/listing.json` | One app's listing: exactly one entry of the index's `apps`. `<prefix>` is the first 16 characters of the publisher key |
 | `apps/<name>.<prefix>/app.ghostlyapp` | The bundle, only for apps this store hosts (Ghostly's own, such as Chess). Other publishers host their bundle in their own repository |
 | `apps/<name>.<prefix>/ghostly-revoke.json` | The publisher's signed revocations, copied into the index |
-| `scripts/` | The check CI runs, and the index builder the owner runs before signing |
+| `scripts/` | The check CI runs, and the index builder the owner runs before signing. TypeScript, run with tsx: the check imports `@ghostly/core` from the sources at `GHOSTLY_COMMIT` |
 | `GHOSTLY_COMMIT` | The Ghostly commit whose CLI and reader the check uses |
 
 ## Submitting an app
@@ -79,7 +79,8 @@ The store key never leaves the owner's machine. To sign a new batch:
 
 ```sh
 git pull
-node scripts/build-index.mjs --out /tmp/ghostly-store.draft.json
+npm ci
+npm run build-index -- --out /tmp/ghostly-store.draft.json
 ghostly store sign /tmp/ghostly-store.draft.json --key ~/ghostly-keys/store.key --out .
 GHOSTLY=~/code/ghostly scripts/check.sh
 git add ghostly-store.json ghostly-store.sig && git commit -m "Sign the store" && git push

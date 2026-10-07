@@ -64,7 +64,9 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: ghostly/package-lock.json
+          cache-dependency-path: |
+            ghostly/package-lock.json
+            store/package-lock.json
 
       - name: Build the Ghostly CLI
         working-directory: ghostly
@@ -73,6 +75,19 @@ jobs:
           npm ci --no-audit --no-fund
           npm run build -w @ghostlytools/cli
           node packages/cli/dist/ghostly.mjs --version
+
+      # The scripts are TypeScript, run with tsx, and import @ghostly/core from the Ghostly checkout's sources
+      # (tsconfig.json maps it to .ghostly, the link scripts/check.sh makes too).
+      - name: Install the store's tools
+        working-directory: store
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          ln -sfn "$GITHUB_WORKSPACE/ghostly" .ghostly
+
+      - name: Typecheck
+        working-directory: store
+        run: npm run typecheck
 
       - name: Check the store
         env:

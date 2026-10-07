@@ -4,8 +4,9 @@
 #   GHOSTLY=~/code/ghostly scripts/check.sh [base dir]
 #
 # GHOSTLY is a checkout of github.com/MiguelMedeiros/ghostly with `npm ci` run. This script builds the CLI there
-# (packages/cli/dist/ghostly.mjs) unless it is already built, bundles the check against that checkout's
-# @ghostly/core, and runs it. The optional base dir is this repository before the change.
+# (packages/cli/dist/ghostly.mjs) unless it is already built, links the checkout as .ghostly (the check imports
+# @ghostly/core from its sources, see tsconfig.json), installs this store's own tools (tsx) when they are missing, and
+# runs scripts/check-store.ts. The optional base dir is this repository before the change.
 set -euo pipefail
 
 store="$(cd "$(dirname "$0")/.." && pwd)"
@@ -24,9 +25,15 @@ if [[ ! -f "$cli" ]]; then
   (cd "$ghostly" && npm run build -w @ghostlytools/cli >/dev/null)
 fi
 
-work="$(mktemp -d)"
-trap 'rm -rf "$work" "$ghostly/.store-bundle-check.mjs"' EXIT
-cp "$store/scripts/bundle-check.mjs" "$ghostly/.store-bundle-check.mjs"
-(cd "$ghostly" && node .store-bundle-check.mjs "$store/scripts/check-store.mjs" "$work" "$ghostly")
+if [[ -e "$store/.ghostly" && ! -L "$store/.ghostly" ]]; then
+  echo "$store/.ghostly is not a link: move it away, this script links the Ghostly checkout there" >&2
+  exit 2
+fi
+ln -sfn "$ghostly" "$store/.ghostly"
 
-node "$work/check.mjs" --store "$store" --cli "$cli" ${base:+--base "$base"}
+tsx="$store/node_modules/.bin/tsx"
+if [[ ! -x "$tsx" ]]; then
+  (cd "$store" && npm ci --no-audit --no-fund >/dev/null)
+fi
+
+"$tsx" --tsconfig "$store/tsconfig.json" "$store/scripts/check-store.ts" --store "$store" --cli "$cli" ${base:+--base "$base"}
