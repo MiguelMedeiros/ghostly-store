@@ -1,0 +1,80 @@
+name: Check
+
+# Every pull request and every push to main: each listing and each bundle it points at is checked with the Ghostly CLI
+# (`ghostly app verify`, every check a client makes), and the signed index with Ghostly's own reader. An unsigned or
+# invalid change to ghostly-store.json, a lower sequence than the one on main, or a new STORE_KEY fails.
+#
+# The CLI is built from Ghostly at the commit in GHOSTLY_COMMIT: the version on npm (1.1.4) has no `app` commands yet.
+# Once @ghostlytools/cli 1.2 is on npm, the build steps become `npx @ghostlytools/cli@1.2.x app verify`.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Store check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout the store
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: store
+          persist-credentials: false
+
+      - name: Checkout the base it changes
+        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000')
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: base
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          persist-credentials: false
+
+      - name: The Ghostly commit
+        id: pin
+        run: |
+          set -euo pipefail
+          commit="$(tr -d '[:space:]' < store/GHOSTLY_COMMIT)"
+          if [[ ! "$commit" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error file=GHOSTLY_COMMIT::is a full 40-character commit of github.com/MiguelMedeiros/ghostly"
+            exit 1
+          fi
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Ghostly
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: MiguelMedeiros/ghostly
+          ref: ${{ steps.pin.outputs.commit }}
+          path: ghostly
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: ghostly/package-lock.json
+
+      - name: Build the Ghostly CLI
+        working-directory: ghostly
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npm run build -w @ghostlytools/cli
+          node packages/cli/dist/ghostly.mjs --version
+
+      - name: Check the store
+        env:
+          GHOSTLY: ${{ github.workspace }}/ghostly
+        run: store/scripts/check.sh ${{ (github.event_name == 'pull_request' || (github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000')) && format('{0}/base', github.workspace) || '' }}
