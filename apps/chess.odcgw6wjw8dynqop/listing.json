@@ -1,0 +1,15 @@
+{
+  "ref": "odcgw6wjw8dynqop84r47jbjcdqossbgrfiejd367e14hgxmjcho/chess",
+  "sequence": 1,
+  "digest": "6IXw5qOIDf2RNsVRLZbO3rtCn7begmu4Gc9Is2bLIFc",
+  "urls": [
+    "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-store/HEAD/apps/chess.odcgw6wjw8dynqop/app.ghostlyapp"
+  ],
+  "title": "Chess",
+  "tagline": "Play chess with a contact, live in your chat",
+  "category": "Games",
+  "developer": "Ghostly",
+  "submitter": "Ghostly",
+  "repo": "https://github.com/MiguelMedeiros/ghostly",
+  "support": "https://github.com/MiguelMedeiros/ghostly/issues"
+}
