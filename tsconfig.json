@@ -1,0 +1,25 @@
+{
+  // The scripts import @ghostly/core from the sources of a Ghostly checkout: scripts/check.sh links it as .ghostly
+  // (CI does the same with the checkout at GHOSTLY_COMMIT). tsc checks those sources too, so the options below are
+  // the ones packages/core/tsconfig.json uses, plus Node's types for the scripts.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@ghostly/core": ["./.ghostly/packages/core/src/index.ts"]
+    }
+  },
+  "include": ["scripts"]
+}

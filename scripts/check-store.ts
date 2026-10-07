@@ -1,10 +1,11 @@
 // Checks this store as a Ghostly client would read it (WISP 1200, "Stores"), and the listings waiting to be signed.
 //
-// It is bundled against @ghostly/core from a pinned Ghostly commit (scripts/check.sh), so it reads the index, the
-// listings and the revocations with the very code the app uses. Bundles are checked with the Ghostly CLI's
-// `app verify`, which runs every check a client makes before it stores a bundle.
+// It imports @ghostly/core straight from the sources of a Ghostly checkout at the pinned commit (scripts/check.sh links
+// it as .ghostly; tsconfig.json maps the import there), so it reads the index, the listings and the revocations with
+// the very code the app uses. Bundles are checked with the Ghostly CLI's `app verify`, which runs every check a client
+// makes before it stores a bundle.
 //
-//   node check.mjs --store <dir> --cli <ghostly.mjs> [--base <dir>]
+//   tsx scripts/check-store.ts --store <dir> --cli <ghostly.mjs> [--base <dir>]
 //
 // --base is the same repository before the change (a pull request's base). With it, a change to the signed index must
 // raise its sequence, and a store key, once set, must not change.
@@ -17,16 +18,16 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import {
   appStoreDecision, canonicalJson, isAppKey, isAppUrl, readAppListing, readAppRevocations, readAppStore,
+  type AppListing, type AppStoreReading,
 } from "@ghostly/core";
+import { parseArgs } from "./args.ts";
 
-const args = Object.fromEntries(
-  process.argv.slice(2).reduce((pairs, arg, i, all) => (arg.startsWith("--") ? [...pairs, [arg.slice(2), all[i + 1]]] : pairs), []),
-);
+const args = parseArgs(process.argv.slice(2));
 const STORE = args.store;
 const CLI = args.cli;
 const BASE = args.base && existsSync(args.base) ? args.base : null;
 if (!STORE || !CLI) {
-  console.error("usage: node check.mjs --store <dir> --cli <ghostly.mjs> [--base <dir>]");
+  console.error("usage: tsx scripts/check-store.ts --store <dir> --cli <ghostly.mjs> [--base <dir>]");
   process.exit(2);
 }
 
@@ -44,30 +45,47 @@ const FOLDER = /^([a-z][a-z0-9-]{0,31})\.([ybndrfg8ejkmcpqxot1uwisza345h769]{16}
 const now = Math.floor(Date.now() / 1000);
 const inActions = process.env.GITHUB_ACTIONS === "true";
 let errors = 0;
-const error = (file, message) => {
+const error = (file: string, message: string): void => {
   errors++;
   console.log(inActions ? `::error file=${file}::${message.replace(/\n/g, " ")}` : `error: ${file}: ${message}`);
 };
-const notice = (file, message) => console.log(inActions ? `::notice file=${file}::${message.replace(/\n/g, " ")}` : `note: ${file}: ${message}`);
-const ok = (message) => console.log(`ok: ${message}`);
+const notice = (file: string, message: string): void =>
+  console.log(inActions ? `::notice file=${file}::${message.replace(/\n/g, " ")}` : `note: ${file}: ${message}`);
+const ok = (message: string): void => console.log(`ok: ${message}`);
 
-const read = (root, path) => (existsSync(join(root, path)) ? new Uint8Array(readFileSync(join(root, path))) : null);
-const text = (root, path) => { const bytes = read(root, path); return bytes ? new TextDecoder().decode(bytes) : null; };
-const why = (reading) => `${reading.reason}${reading.detail ? `: ${reading.detail}` : ""}`;
+const read = (root: string, path: string): Uint8Array | null =>
+  existsSync(join(root, path)) ? new Uint8Array(readFileSync(join(root, path))) : null;
+const text = (root: string, path: string): string | null => {
+  const bytes = read(root, path);
+  return bytes ? new TextDecoder().decode(bytes) : null;
+};
+/** A refusal from a core reader, in words. */
+const why = (reading: { reason: string; detail?: string }): string => `${reading.reason}${reading.detail ? `: ${reading.detail}` : ""}`;
 
 /** A URL a client fetches: https, no port, no user, and only on the two hosts (jsDelivr only at a full commit). */
-function fetchable(url) {
+function fetchable(url: string): boolean {
   if (!isAppUrl(url)) return false;
   const parsed = new URL(url);
   return parsed.port === "" && FETCH_HOSTS.includes(parsed.hostname.toLowerCase());
 }
 
+/** What `ghostly app verify` prints on its last line (packages/cli, `app verify`). */
+interface VerifyOutput {
+  valid?: boolean;
+  ref: string;
+  sequence: number;
+  digest: string;
+  bytes: number;
+  error?: { message?: string };
+}
+type Verified = { ok: true; bundle: VerifyOutput } | { ok: false; message: string };
+
 /** `ghostly app verify <file|url>`: the bundle's ref, sequence and digest, or why it was refused. */
-function verifyBundle(source) {
-  const run = spawnSync(process.execPath, [CLI, "app", "verify", source], { encoding: "utf8", timeout: 120_000 });
+function verifyBundle(cli: string, source: string): Verified {
+  const run = spawnSync(process.execPath, [cli, "app", "verify", source], { encoding: "utf8", timeout: 120_000 });
   const out = `${run.stdout ?? ""}`.trim() || `${run.stderr ?? ""}`.trim();
-  let value;
-  try { value = JSON.parse(out.split("\n").pop()); } catch { /* said below */ }
+  let value: VerifyOutput | undefined;
+  try { value = JSON.parse(out.split("\n").pop() ?? "") as VerifyOutput; } catch { /* said below */ }
   if (run.status === 0 && value?.valid) return { ok: true, bundle: value };
   return { ok: false, message: value?.error?.message ?? (out || `exit ${run.status}`) };
 }
@@ -85,7 +103,7 @@ const storeKey = isAppKey(keyText) ? keyText : null;
 
 const indexBytes = read(STORE, "ghostly-store.json");
 const sigBytes = read(STORE, "ghostly-store.sig");
-let signed = null;
+let signed: AppStoreReading | null = null;
 if (!storeKey) {
   if (indexBytes || sigBytes) error("ghostly-store.json", "there is a signed index but STORE_KEY is empty: the index is read only under the key in STORE_KEY");
   else notice("STORE_KEY", "empty: the store is not signed yet, so clients do not read it");
@@ -96,7 +114,7 @@ if (!storeKey) {
 } else {
   const reading = readAppStore(indexBytes, sigBytes, now, storeKey);
   if (!reading.ok) {
-    error("ghostly-store.json", `a client refuses it (${why(reading)}). Build it with scripts/build-index.mjs and sign it with ghostly store sign`);
+    error("ghostly-store.json", `a client refuses it (${why(reading)}). Build it with scripts/build-index.ts and sign it with ghostly store sign`);
   } else {
     signed = reading.store;
     const { index } = signed;
@@ -127,7 +145,7 @@ if (BASE && signed) {
 
 // ---------- listings ----------
 
-const listings = new Map();
+const listings = new Map<string, { listing: AppListing; at: string }>();
 const appsDir = join(STORE, "apps");
 for (const name of existsSync(appsDir) ? readdirSync(appsDir).sort() : []) {
   const dir = join(appsDir, name);
@@ -138,6 +156,7 @@ for (const name of existsSync(appsDir) ? readdirSync(appsDir).sort() : []) {
   }
   const folder = FOLDER.exec(name);
   if (!folder) { error(at, "is not <name>.<first 16 characters of the publisher key>"); continue; }
+  const [, folderName = "", folderPrefix = ""] = folder;
   for (const file of readdirSync(dir)) if (!FOLDER_FILES.has(file)) error(`${at}/${file}`, `an app's folder holds only ${[...FOLDER_FILES].join(", ")}`);
 
   const listingText = text(dir, "listing.json");
@@ -145,8 +164,8 @@ for (const name of existsSync(appsDir) ? readdirSync(appsDir).sort() : []) {
   const parsed = readAppListing(listingText);
   if (!parsed.ok) { error(`${at}/listing.json`, `is not a listing (${why(parsed)})`); continue; }
   const listing = parsed.listing;
-  const [publisher, appName] = listing.ref.split("/");
-  if (appName !== folder[1] || !publisher.startsWith(folder[2])) {
+  const [publisher = "", appName = ""] = listing.ref.split("/");
+  if (appName !== folderName || !publisher.startsWith(folderPrefix)) {
     error(`${at}/listing.json`, `ref ${listing.ref} does not match the folder: it is apps/${appName}.${publisher.slice(0, 16)}/`);
   }
   listings.set(listing.ref, { listing, at });
@@ -160,7 +179,7 @@ for (const name of existsSync(appsDir) ? readdirSync(appsDir).sort() : []) {
       if (local !== `${at}/app.ghostlyapp`) { error(`${at}/listing.json`, `${url}: a bundle hosted here is ${at}/app.ghostlyapp`); continue; }
       hostedHere = true;
     }
-    const checked = verifyBundle(local !== null ? join(STORE, local) : url);
+    const checked = verifyBundle(CLI, local !== null ? join(STORE, local) : url);
     if (!checked.ok) { error(`${at}/listing.json`, `${url}: ${checked.message}`); continue; }
     const b = checked.bundle;
     if (b.ref !== listing.ref) { error(`${at}/listing.json`, `${url} holds ${b.ref}, not ${listing.ref}`); continue; }
@@ -187,10 +206,11 @@ const meta = text(STORE, "store.json");
 if (meta === null) error("store.json", "is missing");
 else {
   try {
-    const value = JSON.parse(meta);
+    // Any JSON value, read as the old check did: null throws (said as "is not JSON"), a string's keys are its indexes.
+    const value = JSON.parse(meta) as Record<string, unknown>;
     for (const key of Object.keys(value)) if (!["name", "description", "kind", "removed", "revoked"].includes(key)) error("store.json", `unknown key ${key}`);
     if (value.kind !== "curated") error("store.json", "kind is curated: this store is a list the maintainers choose");
-  } catch (e) { error("store.json", `is not JSON: ${e.message}`); }
+  } catch (e) { error("store.json", `is not JSON: ${(e as Error).message}`); }
 }
 
 // ---------- what waits to be signed ----------
