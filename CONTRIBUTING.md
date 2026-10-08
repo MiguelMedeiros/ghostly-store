@@ -44,8 +44,10 @@ is no recovery. Never commit it.
 ## 3. Publish the bundle
 
 Commit `app.ghostlyapp` to the root of your **public** GitHub repository (or a `ghostly` branch). Ghostly reads it from
-`raw.githubusercontent.com`. You may add a jsDelivr URL pinned to the full 40-character commit:
-`https://cdn.jsdelivr.net/gh/<you>/<repo>@<commit>/app.ghostlyapp` (a branch, a tag or `latest` is refused).
+jsDelivr pinned to the full 40-character commit you commit it in, and the listing **must** name that URL:
+`https://cdn.jsdelivr.net/gh/<you>/<repo>@<commit>/app.ghostlyapp` (a branch, a tag, `latest` or a short commit is
+refused). It is the copy of the reviewed version that never moves; your `raw.githubusercontent.com` `HEAD` URL may follow
+it.
 
 ## 4. Open the pull request
 
@@ -57,7 +59,10 @@ characters of your publisher key (`ghostly app verify` prints the key). It holds
   "ref": "<publisher key>/<name>",
   "sequence": 1,
   "digest": "<the digest ghostly app verify prints>",
-  "urls": ["https://raw.githubusercontent.com/<you>/<repo>/HEAD/app.ghostlyapp"],
+  "urls": [
+    "https://cdn.jsdelivr.net/gh/<you>/<repo>@<40-character commit>/app.ghostlyapp",
+    "https://raw.githubusercontent.com/<you>/<repo>/HEAD/app.ghostlyapp"
+  ],
   "title": "My Game",
   "tagline": "One line about it",
   "category": "Games",
@@ -71,7 +76,7 @@ characters of your publisher key (`ghostly app verify` prints the key). It holds
 | Field | Rule |
 |---|---|
 | `ref`, `sequence`, `digest` | Exactly what `ghostly app verify` prints for the bundle you submit |
-| `urls` | 1 to 4 https URLs on `raw.githubusercontent.com`, or on `cdn.jsdelivr.net` at a full commit |
+| `urls` | 1 to 4 https URLs on `raw.githubusercontent.com`, or on `cdn.jsdelivr.net` at a full commit. At least one is jsDelivr at a full commit (WISP 1200) |
 | `title`, `tagline` | One line each, at most 40 and 80 characters |
 | `category`, `developer`, `submitter` | Optional, one line of at most 40 characters |
 | `repo`, `support` | Optional https URLs. `repo` is where the source is |

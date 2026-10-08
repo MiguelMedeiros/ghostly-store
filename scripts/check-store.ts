@@ -21,6 +21,7 @@ import {
   type AppListing, type AppStoreReading,
 } from "@ghostly/core";
 import { parseArgs } from "./args.ts";
+import { pinnedUrlProblem } from "./pinned.ts";
 
 const args = parseArgs(process.argv.slice(2));
 const STORE = args.store;
@@ -34,6 +35,11 @@ if (!STORE || !CLI) {
 /** This repository, as raw.githubusercontent.com names it: a bundle hosted here is read from the checkout. */
 const REPO = process.env.STORE_REPOSITORY || process.env.GITHUB_REPOSITORY || "MiguelMedeiros/ghostly-store";
 const HOSTED = `https://raw.githubusercontent.com/${REPO}/HEAD/`;
+/** The pinned URL to suggest for a listing: the store's own commit for a bundle hosted here, else the publisher's. */
+const pinnedExample = (at: string, urls: unknown): string =>
+  Array.isArray(urls) && urls.some((u) => typeof u === "string" && u.startsWith(HOSTED))
+    ? `https://cdn.jsdelivr.net/gh/${REPO}@<40-character commit of this repository>/${at}/app.ghostlyapp`
+    : "https://cdn.jsdelivr.net/gh/<owner>/<repo>@<40-character commit>/app.ghostlyapp";
 /** The only hosts a client reads apps and stores from in release 1.2 (packages/browser/src/engine/appFetch.ts). */
 const FETCH_HOSTS = ["raw.githubusercontent.com", "cdn.jsdelivr.net"];
 /** What a client reads of an index at most (APP_FETCH_LIMITS.storeIndexBytes), under the format's 16 MiB. */
@@ -123,6 +129,9 @@ if (!storeKey) {
     else if (index.expires - now < 14 * 86_400) notice("ghostly-store.json", `expires on ${new Date(index.expires * 1000).toISOString()}: sign it again soon`);
     for (const app of index.apps) {
       if (!app.urls.some(fetchable)) error("ghostly-store.json", `${app.ref}: no URL a client reads (only ${FETCH_HOSTS.join(" and ")})`);
+      // Only a signing fixes the index, so here it is a notice; the listing.json it is built from is refused below.
+      const unpinned = pinnedUrlProblem(app.urls, pinnedExample(`apps/${app.ref.split("/")[1]}.${app.ref.slice(0, 16)}`, app.urls));
+      if (unpinned) notice("ghostly-store.json", `${app.ref}: ${unpinned}. It is fixed at the owner's next signing`);
     }
   }
 }
@@ -161,6 +170,12 @@ for (const name of existsSync(appsDir) ? readdirSync(appsDir).sort() : []) {
 
   const listingText = text(dir, "listing.json");
   if (listingText === null) { error(`${at}/listing.json`, "is missing"); continue; }
+  // Read from the JSON itself, so the rule is said even when the reader refuses the listing (a moving jsDelivr URL).
+  let rawUrls: unknown;
+  let isJson = true;
+  try { rawUrls = (JSON.parse(listingText) as { urls?: unknown } | null)?.urls; } catch { isJson = false; /* said by the reader below */ }
+  const unpinned = isJson ? pinnedUrlProblem(rawUrls, pinnedExample(at, rawUrls)) : null;
+  if (unpinned) error(`${at}/listing.json`, unpinned);
   const parsed = readAppListing(listingText);
   if (!parsed.ok) { error(`${at}/listing.json`, `is not a listing (${why(parsed)})`); continue; }
   const listing = parsed.listing;
