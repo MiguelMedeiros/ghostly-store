@@ -3,6 +3,7 @@
   "sequence": 3,
   "digest": "0KbzVGC-oPCoa_JXHOCrMZtopdYhMOz3eBAuoTGC53w",
   "urls": [
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-store@8430aa609f7ccc4bdef1db4566a298358fc07aab/apps/chess.odcgw6wjw8dynqop/app.ghostlyapp",
     "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-store/HEAD/apps/chess.odcgw6wjw8dynqop/app.ghostlyapp"
   ],
   "title": "Chess",

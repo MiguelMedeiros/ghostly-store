@@ -9,6 +9,7 @@
   "scripts": {
     "build-index": "tsx scripts/build-index.ts",
     "check": "scripts/check.sh",
+    "test": "tsx --test scripts/*.test.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {

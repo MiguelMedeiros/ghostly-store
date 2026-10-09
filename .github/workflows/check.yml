@@ -89,6 +89,10 @@ jobs:
         working-directory: store
         run: npm run typecheck
 
+      - name: Test the check's rules
+        working-directory: store
+        run: npm test
+
       - name: Check the store
         env:
           GHOSTLY: ${{ github.workspace }}/ghostly
