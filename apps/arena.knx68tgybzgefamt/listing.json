@@ -1,0 +1,16 @@
+{
+  "ref": "knx68tgybzgefamtcj77sy7e57frcbz1jszbm6icyp715bonw1uy/arena",
+  "sequence": 1,
+  "digest": "pI-HbWTraCQw0kb_z_87cK2sk_S8NVIS1m1P8erpTwE",
+  "urls": [
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-quake@65fc417e98163bd04e71e22f315ab55c851745ce/app.ghostlyapp",
+    "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-quake/HEAD/app.ghostlyapp"
+  ],
+  "title": "Arena",
+  "tagline": "A deathmatch for two, live in your chat",
+  "category": "Games",
+  "developer": "Ghostly",
+  "submitter": "Ghostly",
+  "repo": "https://github.com/MiguelMedeiros/ghostly-quake",
+  "support": "https://github.com/MiguelMedeiros/ghostly-quake/issues"
+}
