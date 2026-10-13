@@ -1,0 +1,17 @@
+
+{
+  "ref": "oanmb35oi8qosn6m5zwuraq1odwgepopohuxzmq19jd513p55hgo/cinema",
+  "sequence": 1,
+  "digest": "-KdB4Jqsn5JpraYiVVnLnDP4b25VkBs12si2B-SPrVs",
+  "urls": [
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-cinema@e0cc4511161b91de0846bf6474c4b2dff299bf2a/app.ghostlyapp",
+    "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-cinema/HEAD/app.ghostlyapp"
+  ],
+  "title": "Cinema",
+  "tagline": "Your films and series, shared with a contact in your chat",
+  "category": "Video",
+  "developer": "Ghostly",
+  "submitter": "Ghostly",
+  "repo": "https://github.com/MiguelMedeiros/ghostly-cinema",
+  "support": "https://github.com/MiguelMedeiros/ghostly-cinema/issues"
+}
