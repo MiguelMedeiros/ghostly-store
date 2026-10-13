@@ -1,9 +1,9 @@
 {
   "ref": "knx68tgybzgefamtcj77sy7e57frcbz1jszbm6icyp715bonw1uy/arena",
-  "sequence": 1,
-  "digest": "pI-HbWTraCQw0kb_z_87cK2sk_S8NVIS1m1P8erpTwE",
+  "sequence": 2,
+  "digest": "hfweH-esd2MCIgqgZfpT6rSV00PhNCzFVH-2yw_bqWI",
   "urls": [
-    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-quake@65fc417e98163bd04e71e22f315ab55c851745ce/app.ghostlyapp",
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-quake@e48e4eca7760f47f000c95e05726586e4aab9006/app.ghostlyapp",
     "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-quake/HEAD/app.ghostlyapp"
   ],
   "title": "Arena",
