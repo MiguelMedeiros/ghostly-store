@@ -1,0 +1,16 @@
+{
+  "ref": "bt85mdaupa7sya7uucqw3nac5nwd5coxz65spe6newcjszwn1fyo/boo-blocks",
+  "sequence": 1,
+  "digest": "2Dxf1ySjAN8ArGUbVvhIFIqOAc4jqCWkR-mNznPUEP4",
+  "urls": [
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-boo-blocks@e9721fa895b98456c231eb88a7a6bdaac7fa583b/app.ghostlyapp",
+    "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-boo-blocks/HEAD/app.ghostlyapp"
+  ],
+  "title": "Boo Blocks",
+  "tagline": "Build a block world together with a contact",
+  "category": "Games",
+  "developer": "Ghostly",
+  "submitter": "Ghostly",
+  "repo": "https://github.com/MiguelMedeiros/ghostly-boo-blocks",
+  "support": "https://github.com/MiguelMedeiros/ghostly-boo-blocks/issues"
+}
