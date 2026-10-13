@@ -1,9 +1,9 @@
 {
   "ref": "bt85mdaupa7sya7uucqw3nac5nwd5coxz65spe6newcjszwn1fyo/boo-blocks",
-  "sequence": 1,
-  "digest": "2Dxf1ySjAN8ArGUbVvhIFIqOAc4jqCWkR-mNznPUEP4",
+  "sequence": 2,
+  "digest": "nGaNF14a8w3TPssG_kVHWKWE5PcJpTknNBYKMEDlwFo",
   "urls": [
-    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-boo-blocks@e9721fa895b98456c231eb88a7a6bdaac7fa583b/app.ghostlyapp",
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-boo-blocks@acc9ac8137fc53211b4539b5d31207f277c8b068/app.ghostlyapp",
     "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-boo-blocks/HEAD/app.ghostlyapp"
   ],
   "title": "Boo Blocks",
