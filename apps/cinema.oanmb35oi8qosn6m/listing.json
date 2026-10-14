@@ -1,10 +1,9 @@
-
 {
   "ref": "oanmb35oi8qosn6m5zwuraq1odwgepopohuxzmq19jd513p55hgo/cinema",
-  "sequence": 1,
-  "digest": "-KdB4Jqsn5JpraYiVVnLnDP4b25VkBs12si2B-SPrVs",
+  "sequence": 2,
+  "digest": "W14w4nFByYGC0EPYaKkrkuCgLDGaeuJQlKGEMp9ojIk",
   "urls": [
-    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-cinema@e0cc4511161b91de0846bf6474c4b2dff299bf2a/app.ghostlyapp",
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-cinema@28b321186aeeb42b3ba00def81794e7f8843c8b2/app.ghostlyapp",
     "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-cinema/HEAD/app.ghostlyapp"
   ],
   "title": "Cinema",
