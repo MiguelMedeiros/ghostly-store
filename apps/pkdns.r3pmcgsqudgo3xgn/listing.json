@@ -1,0 +1,16 @@
+{
+  "ref": "r3pmcgsqudgo3xgntobqk4myyfs45sthfxobc55p5sdd963io48o/pkdns",
+  "sequence": 1,
+  "digest": "BSkqMS2uBsaxdpgHsR7JTny7j1xuhPQew1ninqhL810",
+  "urls": [
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-pkdns@97508f9d0fdb240ddd72039f32ee00698d8e21a5/app.ghostlyapp",
+    "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-pkdns/HEAD/app.ghostlyapp"
+  ],
+  "title": "PKDNS Resolver",
+  "tagline": "Resolve Pkarr public keys to DNS records",
+  "category": "Tools",
+  "developer": "Miguel Medeiros",
+  "submitter": "MiguelMedeiros",
+  "repo": "https://github.com/MiguelMedeiros/ghostly-pkdns",
+  "support": "https://github.com/MiguelMedeiros/ghostly-pkdns/issues"
+}
