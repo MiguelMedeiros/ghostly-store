@@ -1,9 +1,9 @@
 {
   "ref": "r3pmcgsqudgo3xgntobqk4myyfs45sthfxobc55p5sdd963io48o/pkdns",
-  "sequence": 1,
-  "digest": "BSkqMS2uBsaxdpgHsR7JTny7j1xuhPQew1ninqhL810",
+  "sequence": 2,
+  "digest": "c3LQFk09pPKFOxmAmcFY1UsMubbIq6BhlYIWAcSrNDQ",
   "urls": [
-    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-pkdns@97508f9d0fdb240ddd72039f32ee00698d8e21a5/app.ghostlyapp",
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-pkdns@7153692a0d0d6d38adbfdb744a5572919828fe32/app.ghostlyapp",
     "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-pkdns/HEAD/app.ghostlyapp"
   ],
   "title": "PKDNS Resolver",

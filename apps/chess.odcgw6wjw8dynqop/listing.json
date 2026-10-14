@@ -1,9 +1,9 @@
 {
   "ref": "odcgw6wjw8dynqop84r47jbjcdqossbgrfiejd367e14hgxmjcho/chess",
-  "sequence": 4,
-  "digest": "EEnFmP0grTkTe_9qgapQsEEZzWB9FcpoimWkHnfecVs",
+  "sequence": 5,
+  "digest": "PnrjBRayGNbhfCkjPXmxLpjKYe2_m9Q65_hUPP8BHOc",
   "urls": [
-    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-chess@c665ab194478145fd9b9a4777e6c0d1893969649/app.ghostlyapp",
+    "https://cdn.jsdelivr.net/gh/MiguelMedeiros/ghostly-chess@0cbf1acc8fd7a03848f4e2a68cbec8854767ceaa/app.ghostlyapp",
     "https://raw.githubusercontent.com/MiguelMedeiros/ghostly-chess/HEAD/app.ghostlyapp"
   ],
   "title": "Chess",
