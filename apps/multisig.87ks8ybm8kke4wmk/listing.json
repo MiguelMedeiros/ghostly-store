@@ -1,0 +1,16 @@
+{
+  "ref": "87ks8ybm8kke4wmkhtzwabyh7bttgd5yqbeft7n5tkiausrtma5o/multisig",
+  "sequence": 1,
+  "digest": "Ghr-sweHS5QRn4ntIx8lOcWbKvRP7enCCV-BcYGWnvA",
+  "urls": [
+    "https://cdn.jsdelivr.net/gh/vforvilela/ghostly-multisig@b4614fe48a420e356e9ddc9ba609f8f6e5a015b4/app.ghostlyapp",
+    "https://raw.githubusercontent.com/vforvilela/ghostly-multisig/HEAD/app.ghostlyapp"
+  ],
+  "title": "Multisig",
+  "tagline": "Pass a multisig transaction between co-signers in your chat",
+  "category": "Tools",
+  "developer": "vforvilela",
+  "submitter": "vforvilela",
+  "repo": "https://github.com/vforvilela/ghostly-multisig",
+  "support": "https://github.com/vforvilela/ghostly-multisig/issues"
+}
